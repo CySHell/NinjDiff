@@ -58,6 +58,8 @@ class BDBasicBlockEdge(BDObject):
     Represents a Control Flow Graph edge - a directed link between 2 BDBasicBlock objects.
     """
 
+
+
     bd_obj_type = bd_enums.TargetType.BasicBlockEdge
     bd_obj_IR: bd_enums.IRType = bd_enums.IRType.Assembly
 
@@ -83,6 +85,9 @@ class BDBasicBlockEdge(BDObject):
         return self.uuid
 
     def __repr__(self):
+        return f'{self.underlying_obj[0]} -> {self.underlying_obj[1]}'
+
+    def __str__(self):
         return f'{self.underlying_obj[0]} -> {self.underlying_obj[1]}'
 
 
