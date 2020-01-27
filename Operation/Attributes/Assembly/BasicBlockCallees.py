@@ -23,7 +23,7 @@ class BasicBlockCallees(Attribute):
         if BasicBlockCallees_value:
             pass
         else:
-            names_hash = xxhash.xxh64()
+            names_hash = xxhash.xxh32()
             bb_start = base_object.underlying_obj.start
             bb_end = base_object.underlying_obj.end
 

@@ -5,7 +5,7 @@ from ...Enums import bd_enums
 import binaryninja
 import xxhash
 from typing import Dict
-
+from ... import Configuration
 
 class BDFunction(BDObject):
     """
@@ -21,7 +21,7 @@ class BDFunction(BDObject):
         self.uuid = self.generate_uuid(self.underlying_obj)
 
         # bd_basic_blocks {BDBasicBlock.uuid: BDBasicBlock
-        self.bd_basic_blocks: Dict[str, BDBasicBlock] = dict()
+        self.bd_basic_blocks: Dict[int, BDBasicBlock] = dict()
 
     def get_parents(self):
         parents_list = list()
@@ -37,7 +37,7 @@ class BDFunction(BDObject):
 
     @staticmethod
     def generate_uuid(underlying_function_object: binaryninja.Function):
-        uuid = xxhash.xxh64()
+        uuid = xxhash.xxh32()
         uuid.update(underlying_function_object.name)
         uuid.update(underlying_function_object.view.file.filename)
 
@@ -49,8 +49,9 @@ class BDFunction(BDObject):
             pass
         else:
             for bb in self.underlying_obj.basic_blocks:
-                bd_basic_block = BDBasicBlock(bb, self)
-                self.bd_basic_blocks.update({bd_basic_block.uuid: bd_basic_block})
+                if bb.instruction_count >= Configuration.MIN_BASIC_BLOCK_INSTRUCTION_LENGTH:
+                    bd_basic_block = BDBasicBlock(bb, self)
+                    self.bd_basic_blocks.update({bd_basic_block.uuid: bd_basic_block})
 
     def __hash__(self):
         return self.uuid
@@ -60,6 +61,7 @@ class BDFunction(BDObject):
 
     def __str__(self):
         return self.underlying_obj.name
+
 
 class BDFunctionSet(BDSet):
     """

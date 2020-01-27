@@ -23,7 +23,7 @@ class FunctionStringReferences(Attribute):
             pass
 
         else:
-            strings_hash = xxhash.xxh64()
+            strings_hash = xxhash.xxh32()
             current_function: Function = base_object.underlying_obj
 
             for addr in range(current_function.lowest_address, current_function.highest_address):

@@ -20,7 +20,7 @@ class BasicBlockHash(Attribute):
         if BasicBlockHash_value:
             pass
         else:
-            hash_value = xxhash.xxh64()
+            hash_value = xxhash.xxh32()
             for instruction_expression in base_object.underlying_obj:
                 for instruction in instruction_expression[0]:
                     hash_value.update(instruction.text)

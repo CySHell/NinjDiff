@@ -272,7 +272,7 @@ class FlowManager:
 
                 if matched_objs:
                     # The Selector has found a unique match between the source and target objects.
-                    matched_objs_uuid = xxhash.xxh64(str(matched_objs[0].uuid) + str(matched_objs[1].uuid)).intdigest()
+                    matched_objs_uuid = xxhash.xxh32(str(matched_objs[0].uuid) + str(matched_objs[1].uuid)).intdigest()
                     existing_match = None
                     for potential_match in self.flow_result.potentially_matched_bd_objects:
                         if potential_match[0] == matched_objs_uuid:
@@ -316,7 +316,7 @@ class FlowManager:
                 if matched_objs:
                     # A unique minimal match was found
 
-                    matched_objs_uuid = xxhash.xxh64(str(matched_objs[0].uuid) + str(matched_objs[1].uuid)).intdigest()
+                    matched_objs_uuid = xxhash.xxh32(str(matched_objs[0].uuid) + str(matched_objs[1].uuid)).intdigest()
                     existing_match = False
                     for potential_match in self.flow_result.potentially_matched_bd_objects:
                         if potential_match[0] == matched_objs_uuid:

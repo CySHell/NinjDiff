@@ -35,7 +35,7 @@ class BDBasicBlock(BDObject):
 
     @staticmethod
     def generate_uuid(bn_basic_block: binaryninja.BasicBlock):
-        uuid = xxhash.xxh64()
+        uuid = xxhash.xxh32()
         uuid.update(str(bn_basic_block.disassembly_text))
         uuid.update(str(bn_basic_block.index))
         uuid.update(bn_basic_block.function.name)
@@ -76,7 +76,7 @@ class BDBasicBlockEdge(BDObject):
 
     @staticmethod
     def generate_uuid(source_bd_bb: BDBasicBlock, target_bd_bb: BDBasicBlock):
-        uuid = xxhash.xxh64()
+        uuid = xxhash.xxh32()
         uuid.update(str(source_bd_bb.uuid))
         uuid.update(str(target_bd_bb.uuid))
         return uuid.intdigest()
