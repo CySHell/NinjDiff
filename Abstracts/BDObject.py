@@ -45,6 +45,9 @@ class BDObject(ABC):
     def get_attribute_value(self, attr_name: str):
         return self.extracted_attributes.get(attr_name)
 
+    def get_all_attribute_values(self):
+        return self.extracted_attributes
+
     @abstractmethod
     def __repr__(self):
         pass

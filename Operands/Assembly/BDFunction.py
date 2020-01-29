@@ -7,6 +7,7 @@ import xxhash
 from typing import Dict
 from ... import Configuration
 
+
 class BDFunction(BDObject):
     """
     Represents a Function operand for comparisons

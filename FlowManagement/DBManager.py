@@ -129,6 +129,17 @@ class DBManager:
         Insert a BDFunction into the DB, including all its BDBasicBlock object and associated attributes.
         """
 
+        # Create the attribute dictionary to insert into the DB
+        func_invariant_attributes: List[List[str, str, Optional[int, str, float, List, Dict]]] = list()
+        func_context_attributes: List[List[str, str, Optional[int, str, float, List, Dict]]] = list()
+
+        for attr_name, attr_feature in bd_func.get_all_attribute_values().items():
+            for feature_name, feature_value in attr_feature:
+                if self.loaded_attributes.get(attr_name).value_type == bd_enums.AttrScope.Contextual:
+                    func_context_attributes.append([attr_name, feature_name, feature_value])
+                else:
+                    func_invariant_attributes.append([attr_name, feature_name, feature_value])
+
         log.log_info(f'insert_func_into_db: Function uuid {bd_func.uuid}')
         with self.driver.session() as session:
             # Create the function node
