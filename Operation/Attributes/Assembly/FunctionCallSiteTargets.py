@@ -12,7 +12,7 @@ class FunctionCallSiteTargets(Attribute):
     """
 
     def __init__(self):
-        super().__init__(name='FunctionCallSiteTargets', value_type=bd_enums.AttrValueType.DICT,
+        super().__init__(name='FunctionCallSiteTargets', value_type=bd_enums.AttrScope.Contextual,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.BasicBlock)
 
         # function_callsites = {callsite_address: target_function_address, target_function_name, target_function_symbol}

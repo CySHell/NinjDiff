@@ -18,7 +18,7 @@ class BasicBlockSPP(Attribute):
     modulu_value = pow(2, 64)
 
     def __init__(self):
-        super().__init__(name='BasicBlockSPP', value_type=bd_enums.AttrValueType.INT,
+        super().__init__(name='BasicBlockSPP', value_type=bd_enums.AttrScope.InVariant,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.BasicBlock)
         self.spp_value = 1
 

@@ -33,6 +33,7 @@ class DBManager:
             self.loaded_attributes.update(PluginManager.import_attributes(ir))
 
     def calc_bv_uuid(self) -> int:
+        # BV UUID is the hash of all the bytes in the file.
         file_hash = xxhash.xxh32()
         file_hash.update(self.bv.read(0, self.bv.end))
         return file_hash.intdigest()
@@ -44,10 +45,11 @@ class DBManager:
         """
 
         cypher_str = 'MATCH (n:' + node_label + ' {uuid: "' + str(uuid) + '"}) ' \
-                     'RETURN COUNT(n) as exists'
+                                                                          'RETURN COUNT(n) as exists'
         log.log_info(f'exists_in_db: cypher string is {cypher_str}')
         result: StatementResult = session.run(cypher_str)
-        log.log_info(f'exists_in_db: UUID {str(uuid)} with label {node_label} found in DB {result.peek()["exists"]} times.')
+        log.log_info(f'exists_in_db: UUID {str(uuid)} with label {node_label} found in DB {result.peek()["exists"]} '
+                     f'times.')
         if result.single()['exists']:
             return True
         else:
@@ -58,7 +60,9 @@ class DBManager:
         with self.driver.session() as session:
             if not self.exists_in_db(self.function_collection_uuid, 'FunctionCollection', session):
                 # The function collection doesn't yet exist in the DB, continue with population
-                session.run('CREATE (:FunctionCollection {uuid: ' + str(self.function_collection_uuid) + '}) ')
+                session.run('CREATE (:FunctionCollection {uuid: ' + str(self.function_collection_uuid) + ', '
+                                                         'filename: ' + self.bv.file.name + ', '
+                                                         'arch: ' + str(self.bv.arch) + '}) ')
 
             for func in self.bv.functions:
                 func: Function

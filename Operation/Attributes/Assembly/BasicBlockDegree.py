@@ -10,7 +10,7 @@ class BasicBlockDegree(Attribute):
     """
 
     def __init__(self):
-        super().__init__(name='BasicBlockDegree', value_type=bd_enums.AttrValueType.DICT,
+        super().__init__(name='BasicBlockDegree', value_type=bd_enums.AttrScope.InVariant,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.BasicBlock)
 
     def extract_attribute(self, base_object: BDBasicBlock) -> Dict:

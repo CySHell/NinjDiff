@@ -10,7 +10,7 @@ class Attribute(ABC):
     object in order to later perform the comparison.
     """
 
-    def __init__(self, name: str, value_type: bd_enums.AttrValueType, ir_type: bd_enums.IRType,
+    def __init__(self, name: str, value_type: bd_enums.AttrScope, ir_type: bd_enums.IRType,
                  target_type: bd_enums.TargetType):
 
         self.value_type = value_type

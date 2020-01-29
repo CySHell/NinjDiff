@@ -16,7 +16,7 @@ class FunctionNormalized(Attribute):
     """
 
     def __init__(self):
-        super().__init__(name='FunctionNormalized', value_type=bd_enums.AttrValueType.LIST,
+        super().__init__(name='FunctionNormalized', value_type=bd_enums.AttrScope.InVariant,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.Function)
         self.normalized_disassembly: List[str] = list()
 

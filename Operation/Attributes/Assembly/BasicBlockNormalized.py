@@ -19,7 +19,7 @@ class BasicBlockNormalized(Attribute):
     """
 
     def __init__(self):
-        super().__init__(name='BasicBlockNormalized', value_type=bd_enums.AttrValueType.LIST,
+        super().__init__(name='BasicBlockNormalized', value_type=bd_enums.AttrScope.InVariant,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.BasicBlock)
 
     def extract_attribute(self, base_object: BDBasicBlock) -> List:

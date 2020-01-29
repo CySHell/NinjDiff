@@ -14,7 +14,7 @@ class FunctionMDIndex(Attribute):
     """
 
     def __init__(self):
-        super().__init__(name='FunctionMDIndex', value_type=bd_enums.AttrValueType.DICT,
+        super().__init__(name='FunctionMDIndex', value_type=bd_enums.AttrScope.Contextual,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.Function)
 
     def extract_attribute(self, base_object: BDFunction) -> Dict:

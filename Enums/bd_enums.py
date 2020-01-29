@@ -12,14 +12,10 @@ class TargetType(Enum):
     InstructionSeries = 7
 
 
-
 @unique
-class AttrValueType(IntEnum):
-    Boolean = 1
-    INT = 2
-    STR = 3
-    DICT = 4
-    LIST = 5
+class AttrScope(Enum):
+    InVariant = 1
+    Contextual = 2
 
 
 @unique
@@ -45,6 +41,7 @@ class AttrValueType(IntEnum):
     LIST = 5
     FLOAT = 6
 
+
 @unique
 class SelectorAlgoPerf(IntEnum):
     # The performance estimation of the selector algorithm
@@ -64,6 +61,7 @@ class SelectorQuality(IntEnum):
     Good = 40
     VeryGood = 50
     Perfect = 100
+
 
 @unique
 class PropertyQuality(IntEnum):

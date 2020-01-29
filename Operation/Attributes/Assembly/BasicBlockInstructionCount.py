@@ -10,7 +10,7 @@ class BasicBlockInstructionCount(Attribute):
     """
 
     def __init__(self):
-        super().__init__(name='BasicBlockInstructionCount', value_type=bd_enums.AttrValueType.INT,
+        super().__init__(name='BasicBlockInstructionCount', value_type=bd_enums.AttrScope.InVariant,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.BasicBlock)
 
     def extract_attribute(self, base_object: BDBasicBlock) -> List:
