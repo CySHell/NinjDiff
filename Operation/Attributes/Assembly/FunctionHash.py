@@ -2,7 +2,7 @@ from ....Enums import bd_enums
 from ....Operands.Assembly.BDFunction import BDFunction
 from ....Abstracts.Attribute import Attribute
 import xxhash
-
+from typing import Dict, Optional
 
 class FunctionHash(Attribute):
     """
@@ -13,7 +13,7 @@ class FunctionHash(Attribute):
         super().__init__(name='FunctionHash', value_type=bd_enums.AttrScope.Contextual,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.Function)
 
-    def extract_attribute(self, base_object: BDFunction) -> int:
+    def extract_attribute(self, base_object: BDFunction) -> Optional[Dict]:
         # Check if value already exists
         FunctionHash_value = base_object.get_attribute_value('FunctionHash')
 
@@ -25,7 +25,10 @@ class FunctionHash(Attribute):
                 for instruction in instruction_expression[0]:
                     hash_value.update(instruction.text)
 
-            base_object.add_attribute_value('FunctionHash', {'hash': hash_value.intdigest()})
-            FunctionHash_value = base_object.get_attribute_value('FunctionHash')
+            FunctionHash_value = {
+                'hash': hash_value.intdigest()
+            }
 
-        return FunctionHash_value['hash'] if FunctionHash_value else None
+            base_object.add_attribute_value('FunctionHash', FunctionHash_value)
+
+        return FunctionHash_value if FunctionHash_value else None

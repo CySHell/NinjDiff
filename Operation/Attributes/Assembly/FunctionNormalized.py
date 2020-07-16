@@ -2,7 +2,7 @@ from ....Enums import bd_enums
 from ....Operands.Assembly.BDFunction import BDFunction
 from ....Abstracts.Attribute import Attribute
 from binaryninja import *
-from typing import Dict, List
+from typing import Dict, Optional
 
 
 class FunctionNormalized(Attribute):
@@ -20,7 +20,7 @@ class FunctionNormalized(Attribute):
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.Function)
         self.normalized_disassembly: List[str] = list()
 
-    def extract_attribute(self, base_object: BDFunction) -> List:
+    def extract_attribute(self, base_object: BDFunction) -> Optional[Dict]:
         # Check if value already exists
         FunctionNormalized_value = base_object.get_attribute_value('FunctionNormalized')
 
@@ -44,7 +44,11 @@ class FunctionNormalized(Attribute):
                         log.log_debug(f'FunctionNormalized: Exception while trying to normalize - {e}')
                         pass
 
-            base_object.add_attribute_value('FunctionNormalized', {'function_normalized': self.normalized_disassembly})
-            FunctionNormalized_value = base_object.get_attribute_value('FunctionNormalized')
+            FunctionNormalized_value = {
+                'function_normalized': self.normalized_disassembly
+            }
+            FunctionNormalized_value.update({'uuid': self.create_attribute_uuid(FunctionNormalized_value)})
 
-        return FunctionNormalized_value['function_normalized'] if FunctionNormalized_value else None
+            base_object.add_attribute_value('FunctionNormalized', FunctionNormalized_value)
+
+        return FunctionNormalized_value if FunctionNormalized_value else None

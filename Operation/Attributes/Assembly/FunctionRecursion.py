@@ -1,7 +1,7 @@
 from ....Enums import bd_enums
 from ....Operands.Assembly.BDFunction import BDFunction
 from ....Abstracts.Attribute import Attribute
-from typing import Dict
+from typing import Dict, Optional
 
 
 class FunctionRecursion(Attribute):
@@ -13,7 +13,7 @@ class FunctionRecursion(Attribute):
         super().__init__(name='FunctionRecursion', value_type=bd_enums.AttrScope.InVariant,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.Function)
 
-    def extract_attribute(self, base_object: BDFunction) -> Dict:
+    def extract_attribute(self, base_object: BDFunction) -> Optional[Dict]:
         # Check if value already exists
         FunctionRecursion_value = base_object.get_attribute_value('FunctionRecursion')
 
@@ -25,7 +25,10 @@ class FunctionRecursion(Attribute):
                 if callee.start == base_object.underlying_obj.start:
                     recursive = True
 
-            base_object.add_attribute_value('FunctionRecursion', {'recursive': recursive})
-            FunctionRecursion_value = base_object.get_attribute_value('FunctionRecursion')
+            FunctionRecursion_value = {
+                'recursive': recursive
+            }
 
-        return FunctionRecursion_value['recursive'] if FunctionRecursion_value else None
+            base_object.add_attribute_value('FunctionRecursion', FunctionRecursion_value)
+
+        return FunctionRecursion_value if FunctionRecursion_value else None

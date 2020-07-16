@@ -4,7 +4,8 @@ from ....Abstracts.Attribute import Attribute
 import hashlib
 import pyprimesieve
 from binaryninja import *
-from typing import Dict, SupportsInt
+from typing import Dict, Optional
+from .... import Configuration
 
 
 class FunctionSPP(Attribute):
@@ -14,14 +15,14 @@ class FunctionSPP(Attribute):
 
     # This dict caches all values discovered in order to make the extraction process faster.
     opcode_to_prime: Dict[str, int] = dict()
-    modulu_value = pow(2, 64)
+    modulu_value = Configuration.MAX_INT
 
     def __init__(self):
         super().__init__(name='FunctionSPP', value_type=bd_enums.AttrScope.InVariant,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.Function)
         self.spp_value = 1
 
-    def extract_attribute(self, base_object: BDFunction) -> SupportsInt:
+    def extract_attribute(self, base_object: BDFunction) -> Optional[Dict]:
         # Check if value already exists
         FunctionSPP_value = base_object.get_attribute_value('FunctionSPP')
 
@@ -38,10 +39,13 @@ class FunctionSPP(Attribute):
                         log.log_info(f'SPP Exception: {e}')
                         pass
 
-            base_object.add_attribute_value('FunctionSPP_value', {'function_spp': self.spp_value})
-            FunctionSPP_value = base_object.get_attribute_value('FunctionSPP_value')
+            FunctionSPP_value = {
+                'function_spp': self.spp_value
+            }
 
-        return FunctionSPP_value['function_spp'] if FunctionSPP_value else None
+            base_object.add_attribute_value('FunctionSPP', FunctionSPP_value)
+
+        return FunctionSPP_value if FunctionSPP_value else None
 
     def get_mapped_prime(self, token: str):
 

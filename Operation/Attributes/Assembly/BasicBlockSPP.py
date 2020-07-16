@@ -5,7 +5,8 @@ from ....Abstracts.Attribute import Attribute
 import hashlib
 import pyprimesieve
 from binaryninja import *
-from typing import Dict
+from typing import Dict, Optional
+import Configuration
 
 
 class BasicBlockSPP(Attribute):
@@ -15,14 +16,14 @@ class BasicBlockSPP(Attribute):
 
     # This dict caches all values discovered in order to make the extraction process faster.
     opcode_to_prime: Dict[str, int] = dict()
-    modulu_value = pow(2, 64)
+    modulu_value = Configuration.MAX_INT
 
     def __init__(self):
         super().__init__(name='BasicBlockSPP', value_type=bd_enums.AttrScope.InVariant,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.BasicBlock)
         self.spp_value = 1
 
-    def extract_attribute(self, base_object: BDBasicBlock) -> int:
+    def extract_attribute(self, base_object: BDBasicBlock) -> Optional[Dict]:
         # Check if value already exists
         BasicBlockSPP_value = base_object.get_attribute_value('BasicBlockSPP')
 
@@ -38,10 +39,13 @@ class BasicBlockSPP(Attribute):
                     except TypeError:
                         pass
 
-            base_object.add_attribute_value('BasicBlockSPP', {'bb_spp': self.spp_value})
-            BasicBlockSPP_value = base_object.get_attribute_value('BasicBlockSPP')
+            BasicBlockSPP_value = {
+                'bb_spp': self.spp_value
+            }
 
-        return BasicBlockSPP_value['bb_spp'] if BasicBlockSPP_value else None
+            base_object.add_attribute_value('BasicBlockSPP', BasicBlockSPP_value)
+
+        return BasicBlockSPP_value if BasicBlockSPP_value else None
 
     def get_mapped_prime(self, token: str):
 

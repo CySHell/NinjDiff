@@ -1,14 +1,9 @@
 import time
+
 from binaryninja import *
-from .FlowManagement.DiffManager import AssemblyFunctionDiffManager
-from .FlowManagement.DBManager import DBManager
-from .Operands.Assembly import BDFunction
+
 from . import Configuration
-from typing import Optional
-from .Operands.Assembly.BDFunction import BDFunction, BDFunctionSet
-
-
-
+from .FlowManagement.DBManager import DBManager
 
 
 def run_diff(bv: BinaryView):
@@ -30,7 +25,7 @@ class BinJdiff(BackgroundTaskThread):
         self.bv.update_analysis_and_wait()
 
         db_mgr = DBManager(self.bv)
-        db_mgr.populate_x86_assembly()
+        db_mgr.populate_assembly_function_collection()
 
         end_time = time.time()
         log.log_info(f"Operation done in {end_time - start_time} seconds")

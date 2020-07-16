@@ -50,9 +50,8 @@ class BDFunction(BDObject):
             pass
         else:
             for bb in self.underlying_obj.basic_blocks:
-                if bb.instruction_count >= Configuration.MIN_BASIC_BLOCK_INSTRUCTION_LENGTH:
-                    bd_basic_block = BDBasicBlock(bb, self)
-                    self.bd_basic_blocks.update({bd_basic_block.uuid: bd_basic_block})
+                bd_basic_block = BDBasicBlock(bb, self)
+                self.bd_basic_blocks.update({bd_basic_block.uuid: bd_basic_block})
 
     def __hash__(self):
         return self.uuid

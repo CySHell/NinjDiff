@@ -10,11 +10,14 @@ def import_attributes(target_ir: bd_enums.IRType):
     loaded_attributes: Dict[str, Attribute] = dict()
     for module in pkgutil.iter_modules(path=Configuration.default_attributes_path):
         module_name = module.name
-        attribute_module = importlib.import_module('.' + module_name,
-                                                   package='NinjDiff.Operation.Attributes.' + target_ir.value)
-        attribute_class_obj: Attribute = getattr(attribute_module, module_name)
-        loaded_attributes.update({module_name: attribute_class_obj})
-
+        try:
+            attribute_module = importlib.import_module('.' + module_name,
+                                                       package='NinjDiff.Operation.Attributes.' + target_ir.value)
+            attribute_class_obj: Attribute = getattr(attribute_module, module_name)
+            attr_instance = attribute_class_obj()
+            loaded_attributes.update({module_name: attr_instance})
+        except ModuleNotFoundError:
+            log.log_debug(f'import_attributes: No package named NinjDiff.Operation.Attributes.{target_ir.value} found')
     log.log_debug(f'Loaded the following Attribute plugins: \n {loaded_attributes}')
 
     return loaded_attributes

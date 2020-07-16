@@ -4,8 +4,26 @@ from ....Abstracts.Attribute import Attribute
 import hashlib
 import pyprimesieve
 from binaryninja import *
-from typing import Dict
+from typing import Dict, Optional
 import math
+
+
+def generate_single_bb_index(edge: BasicBlockEdge):
+    src_bb: BasicBlock = edge.source
+    dst_bb: BasicBlock = edge.target
+
+    back_edge = 1 if edge.back_edge else 1.5
+    in_degree_src = len(src_bb.incoming_edges) * math.sqrt(2)
+    out_degree_src = len(src_bb.outgoing_edges) * math.sqrt(3)
+    in_degree_dst = len(dst_bb.incoming_edges) * math.sqrt(5)
+    out_degree_dst = len(dst_bb.outgoing_edges) * math.sqrt(7)
+    src_dominator_count = len(src_bb.dominators) * math.sqrt(11)
+    dst_dominator_count = len(dst_bb.dominators) * math.sqrt(13)
+    src_post_dominator_count = len(src_bb.post_dominators) * math.sqrt(17)
+    dst_post_dominator_count = len(dst_bb.post_dominators) * math.sqrt(19)
+
+    return back_edge + in_degree_src + out_degree_src + in_degree_dst + out_degree_dst + src_dominator_count + \
+           dst_dominator_count + src_post_dominator_count + dst_post_dominator_count
 
 
 class FunctionStructuralIndex(Attribute):
@@ -28,7 +46,7 @@ class FunctionStructuralIndex(Attribute):
         super().__init__(name='FunctionSPP', value_type=bd_enums.AttrScope.InVariant,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.Function)
 
-    def extract_attribute(self, base_object: BDFunction) -> float:
+    def extract_attribute(self, base_object: BDFunction) -> Optional[Dict]:
         # Check if value already exists
         FunctionStructuralIndex_value = base_object.get_attribute_value('FunctionStructuralIndex')
 
@@ -46,26 +64,12 @@ class FunctionStructuralIndex(Attribute):
                         continue
                     else:
                         edge_cache.add(cache)
-                        function_index += 1 / math.sqrt(self.generate_single_bb_index(edge))
+                        function_index += 1 / math.sqrt(generate_single_bb_index(edge))
 
-            base_object.add_attribute_value('FunctionStructuralIndex_value', {'function_index': function_index})
-            FunctionStructuralIndex_value = base_object.get_attribute_value('FunctionStructuralIndex_value')
+            FunctionStructuralIndex_value = {
+                'function_index': function_index
+            }
 
-        return FunctionStructuralIndex_value['function_index'] if FunctionStructuralIndex_value else None
+            base_object.add_attribute_value('FunctionStructuralIndex', FunctionStructuralIndex_value)
 
-    def generate_single_bb_index(self, edge: BasicBlockEdge):
-        src_bb: BasicBlock = edge.source
-        dst_bb: BasicBlock = edge.target
-
-        back_edge = 1 if edge.back_edge else 1.5
-        in_degree_src = len(src_bb.incoming_edges) * math.sqrt(2)
-        out_degree_src = len(src_bb.outgoing_edges) * math.sqrt(3)
-        in_degree_dst = len(dst_bb.incoming_edges) * math.sqrt(5)
-        out_degree_dst = len(dst_bb.outgoing_edges) * math.sqrt(7)
-        src_dominator_count = len(src_bb.dominators) * math.sqrt(11)
-        dst_dominator_count = len(dst_bb.dominators) * math.sqrt(13)
-        src_post_dominator_count = len(src_bb.post_dominators) * math.sqrt(17)
-        dst_post_dominator_count = len(dst_bb.post_dominators) * math.sqrt(19)
-
-        return back_edge + in_degree_src + out_degree_src + in_degree_dst + out_degree_dst + src_dominator_count + \
-               dst_dominator_count + src_post_dominator_count + dst_post_dominator_count
+        return FunctionStructuralIndex_value if FunctionStructuralIndex_value else None

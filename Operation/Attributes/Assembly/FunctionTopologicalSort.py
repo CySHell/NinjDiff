@@ -2,7 +2,7 @@ from ....Enums import bd_enums
 from ....Operands.Assembly.BDFunction import BDFunction
 from ....Abstracts.Attribute import Attribute
 from binaryninja import *
-from typing import Dict, List, SupportsInt, Tuple
+from typing import Dict, List, SupportsInt, Tuple, Optional
 from ....Utility import TarjanSort
 
 
@@ -16,7 +16,7 @@ class FunctionTopologicalSort(Attribute):
         super().__init__(name='FunctionTopologicalSort', value_type=bd_enums.AttrScope.InVariant,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.Function)
 
-    def extract_attribute(self, base_object: BDFunction) -> Dict:
+    def extract_attribute(self, base_object: BDFunction) -> Optional[Dict]:
         # Check if value already exists
         FunctionTopologicalSort_value = base_object.get_attribute_value('FunctionTopologicalSort')
 
@@ -27,7 +27,7 @@ class FunctionTopologicalSort(Attribute):
             graph: Dict[SupportsInt, List[SupportsInt]] = dict()
 
             # sorted_mapping is a mapping between the index of a basic block and its position in the order.
-            sorted_mapping: Dict[SupportsInt, SupportsInt] = dict()
+            sorted_mapping: Dict = dict()
 
             for bb in base_object.underlying_obj.basic_blocks:
                 graph[bb.index] = []
@@ -60,9 +60,17 @@ class FunctionTopologicalSort(Attribute):
                     sorted_mapping.update({bb_index: order_index})
                     order_index += 1
 
-            base_object.add_attribute_value('FunctionTopologicalSort',
-                                            {'topological_sort': sorted_mapping,
-                                             'natural_loop_count': natural_loop_count})
-            FunctionTopologicalSort_value = base_object.get_attribute_value('FunctionTopologicalSort')
+            # need to convert sorted_mapping to a list, as neo4j doesn't accept nested dicts as properties.
+            sorted_mapping_list = list()
+            for key, value in sorted_mapping.items():
+                sorted_mapping_list.insert(key, value)
+
+            FunctionTopologicalSort_value = {
+                'topological_sort': sorted_mapping_list,
+                'natural_loop_count': natural_loop_count
+            }
+            FunctionTopologicalSort_value.update({'uuid': self.create_attribute_uuid(FunctionTopologicalSort_value)})
+
+            base_object.add_attribute_value('FunctionTopologicalSort', FunctionTopologicalSort_value)
 
         return FunctionTopologicalSort_value if FunctionTopologicalSort_value else None

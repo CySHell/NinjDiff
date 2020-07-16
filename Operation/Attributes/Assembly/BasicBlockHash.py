@@ -2,6 +2,7 @@ from ....Enums import bd_enums
 from ....Operands.Assembly.BDBasicBlock import BDBasicBlock
 from ....Abstracts.Attribute import Attribute
 import xxhash
+from typing import Optional, Dict
 
 
 class BasicBlockHash(Attribute):
@@ -13,7 +14,7 @@ class BasicBlockHash(Attribute):
         super().__init__(name='BasicBlockHash', value_type=bd_enums.AttrScope.Contextual,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.BasicBlock)
 
-    def extract_attribute(self, base_object: BDBasicBlock) -> int:
+    def extract_attribute(self, base_object: BDBasicBlock) -> Optional[Dict]:
         # Check if value already exists
         BasicBlockHash_value = base_object.get_attribute_value('BasicBlockHash')
 
@@ -25,7 +26,10 @@ class BasicBlockHash(Attribute):
                 for instruction in instruction_expression[0]:
                     hash_value.update(instruction.text)
 
-            base_object.add_attribute_value('BasicBlockHash', {'hash': hash_value.intdigest()})
-            BasicBlockHash_value = base_object.get_attribute_value('BasicBlockHash')
+            BasicBlockHash_value = {
+                'hash': hash_value.intdigest()
+            }
 
-        return BasicBlockHash_value['hash'] if BasicBlockHash_value else None
+            base_object.add_attribute_value('BasicBlockHash', BasicBlockHash_value)
+
+        return BasicBlockHash_value if BasicBlockHash_value else None

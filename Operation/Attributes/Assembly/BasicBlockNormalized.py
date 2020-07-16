@@ -5,7 +5,7 @@ from ....Abstracts.Attribute import Attribute
 import hashlib
 import pyprimesieve
 from binaryninja import *
-from typing import Dict, List
+from typing import Dict, Optional
 
 
 class BasicBlockNormalized(Attribute):
@@ -22,7 +22,7 @@ class BasicBlockNormalized(Attribute):
         super().__init__(name='BasicBlockNormalized', value_type=bd_enums.AttrScope.InVariant,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.BasicBlock)
 
-    def extract_attribute(self, base_object: BDBasicBlock) -> List:
+    def extract_attribute(self, base_object: BDBasicBlock) -> Optional[Dict]:
         # Check if value already exists
         BasicBlockNormalized_value = base_object.get_attribute_value('BasicBlockNormalized')
 
@@ -47,7 +47,11 @@ class BasicBlockNormalized(Attribute):
                         log.log_debug(f'BasicBlockNormalized: Exception while trying to normalize - {e}')
                         pass
 
-            base_object.add_attribute_value('BasicBlockNormalized', {'bb_normalized': normalized_disassembly})
-            BasicBlockNormalized_value = base_object.get_attribute_value('BasicBlockNormalized')
+            BasicBlockNormalized_value = {
+                'bb_normalized': normalized_disassembly
+            }
 
-        return BasicBlockNormalized_value['bb_normalized'] if BasicBlockNormalized_value else None
+            BasicBlockNormalized_value.update({'uuid': self.create_attribute_uuid(BasicBlockNormalized_value)})
+            base_object.add_attribute_value('BasicBlockNormalized', BasicBlockNormalized_value)
+
+        return BasicBlockNormalized_value if BasicBlockNormalized_value else None

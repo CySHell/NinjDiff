@@ -58,8 +58,6 @@ class BDBasicBlockEdge(BDObject):
     Represents a Control Flow Graph edge - a directed link between 2 BDBasicBlock objects.
     """
 
-
-
     bd_obj_type = bd_enums.TargetType.BasicBlockEdge
     bd_obj_IR: bd_enums.IRType = bd_enums.IRType.Assembly
 

@@ -1,7 +1,7 @@
 from ....Enums import bd_enums
 from ....Operands.Assembly.BDFunction import BDFunction
 from ....Abstracts.Attribute import Attribute
-from typing import Dict
+from typing import Dict, Optional
 import xxhash
 from binaryninja import *
 
@@ -15,7 +15,7 @@ class FunctionStringReferences(Attribute):
         super().__init__(name='FunctionStringReferences', value_type=bd_enums.AttrScope.Contextual,
                          ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.Function)
 
-    def extract_attribute(self, base_object: BDFunction) -> Dict:
+    def extract_attribute(self, base_object: BDFunction) -> Optional[Dict]:
         # Check if value already exists
         FunctionStringReferences_value = base_object.get_attribute_value('FunctionStringReferences')
 
@@ -33,7 +33,10 @@ class FunctionStringReferences(Attribute):
                     if string:
                         strings_hash.update(string.value.encode('utf8'))
 
-            base_object.add_attribute_value('FunctionStringReferences', {'strings_hash': strings_hash.intdigest()})
-            FunctionStringReferences_value = base_object.get_attribute_value('FunctionStringReferences')
+            FunctionStringReferences_value = {
+                'strings_hash': strings_hash.intdigest()
+            }
 
-        return FunctionStringReferences_value['strings_hash'] if FunctionStringReferences_value else None
+            base_object.add_attribute_value('FunctionStringReferences', FunctionStringReferences_value)
+
+        return FunctionStringReferences_value if FunctionStringReferences_value else None

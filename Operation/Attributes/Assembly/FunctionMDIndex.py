@@ -2,7 +2,7 @@ from ....Enums import bd_enums
 from ....Operands.Assembly.BDFunction import BDFunction
 from ....Abstracts.Attribute import Attribute
 from binaryninja import *
-from typing import Dict, List, Tuple, SupportsFloat
+from typing import Dict, List, Tuple, SupportsFloat, Optional
 import math
 
 
@@ -15,9 +15,10 @@ class FunctionMDIndex(Attribute):
 
     def __init__(self):
         super().__init__(name='FunctionMDIndex', value_type=bd_enums.AttrScope.Contextual,
-                         ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.Function)
+                         ir_type=bd_enums.IRType.Assembly, target_type=bd_enums.TargetType.Function,
+                         dependencies=['FunctionTopologicalSort'])
 
-    def extract_attribute(self, base_object: BDFunction) -> Dict:
+    def extract_attribute(self, base_object: BDFunction) -> Optional[Dict]:
         # Check if value already exists
         FunctionMDIndex_value = base_object.get_attribute_value('FunctionMDIndex')
 
@@ -54,8 +55,12 @@ class FunctionMDIndex(Attribute):
                     relaxed_md_index += 1 / math.sqrt(relaxed_emb)
                     md_index += 1 / math.sqrt(emb)
 
-            base_object.add_attribute_value('FunctionMDIndex_value', {'md_index': md_index,
-                                                                      'relaxed_md_index': relaxed_md_index})
-            FunctionMDIndex_value = base_object.get_attribute_value('FunctionMDIndex_value')
+            FunctionMDIndex_value = {
+                'md_index': md_index,
+                'relaxed_md_index': relaxed_md_index
+            }
+            FunctionMDIndex_value.update({'uuid': self.create_attribute_uuid(FunctionMDIndex_value)})
+
+            base_object.add_attribute_value('FunctionMDIndex', FunctionMDIndex_value)
 
         return FunctionMDIndex_value if FunctionMDIndex_value else None
